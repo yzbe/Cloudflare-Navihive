@@ -10,6 +10,13 @@
   <title>导航站</title>
 </head>
 
+  <style>
+  /* 隐藏所有包含 github 关键字的固定定位链接或特定类名 */
+  a[href*="github.com"], .github-corner, .footer-github {
+    display: none !important;
+  }
+</style>
+
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
