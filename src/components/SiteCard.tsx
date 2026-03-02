@@ -74,7 +74,7 @@ const SiteCard = memo(function SiteCard({
   // 处理卡片点击
   const handleCardClick = () => {
     if (!isEditMode && site.url) {
-      window.open(site.url, '_blank');
+      window.location.href = site.url;
     }
   };
 
