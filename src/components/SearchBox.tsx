@@ -51,7 +51,7 @@ type SearchMode = 'internal' | 'external';
 
 const SearchBox: React.FC<SearchBoxProps> = ({ groups, sites, onInternalResultClick }) => {
   const [query, setQuery] = useState('');
-  const [mode, setMode] = useState<SearchMode>('internal');
+  const [mode, setMode] = useState<SearchMode>('external');
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [selectedEngine, setSelectedEngine] = useState<SearchEngine>(getDefaultSearchEngine());
