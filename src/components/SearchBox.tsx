@@ -104,7 +104,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ groups, sites, onInternalResultCl
       url = buildSearchUrl(selectedEngine, query);
     }
 
-    window.open(url, '_blank', 'noopener,noreferrer');
+    window.location.href = url;
     setQuery('');
     setShowResults(false);
   };
@@ -148,7 +148,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ groups, sites, onInternalResultCl
 
     if (result.type === 'site' && result.url) {
       // 打开站点 URL
-      window.open(result.url, '_blank', 'noopener,noreferrer');
+      window.location.href = result.url;
     }
 
     // 调用外部回调（如需要滚动到该元素等）
