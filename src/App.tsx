@@ -1786,7 +1786,7 @@ function App() {
             <Paper
               component='a'
               href='https://github.com/zqq-nuli/Navihive'
-              target='_self'
+              target='_blank'
               rel='noopener noreferrer'
               elevation={2}
               sx={{
