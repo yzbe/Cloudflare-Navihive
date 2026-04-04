@@ -4,6 +4,7 @@ import { Site } from '../API/http';
 import SiteSettingsModal from './SiteSettingsModal';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+// 引入Material UI组件
 import {
   Card,
   CardContent,
@@ -91,8 +92,8 @@ const SiteCard = memo(function SiteCard({
   const cardContent = (
     <Box
       sx={{
-        height: 48, // 恢复为 48px
-        width: 140, // 恢复为 140px
+        height: '48px !important',
+        width: '140px !important',
         position: 'relative',
         transition: 'transform 0.3s ease-in-out',
         ...(!isEditMode && {
@@ -128,22 +129,35 @@ const SiteCard = memo(function SiteCard({
             sx={{
               height: '100%',
               width: '100%',
-              padding: '0 12px !important', // 恢复为 12px 左右留白
+              // 【严格模式】拒绝 MUI 响应式缩写，全部全拼
+              paddingLeft: '12px !important',
+              paddingRight: '12px !important',
+              paddingTop: '0 !important',
+              paddingBottom: '0 !important',
               boxSizing: 'border-box',
               cursor: 'grab',
               display: 'flex',
               alignItems: 'center', 
-              justifyContent: 'flex-start', // 强制靠左对齐
+              justifyContent: 'flex-start',
             }}
           >
             {/* 拖拽指示图标 */}
-            <Box mr="4px" display="flex" alignItems="center">
+            <Box display="flex" alignItems="center" sx={{ marginRight: '4px !important' }}>
               <DragIndicatorIcon color="action" sx={{ fontSize: 18 }} />
             </Box>
 
             {/* 图标区域 */}
             {!iconError && site.icon ? (
-              <Box position="relative" mr="8px" width={24} height={24} flexShrink={0}> 
+              <Box 
+                position="relative" 
+                sx={{ 
+                  marginRight: '8px !important', 
+                  width: '24px !important', 
+                  minWidth: '24px !important', // 锁死最小宽度
+                  height: '24px !important', 
+                  flexShrink: 0 
+                }}
+              > 
                 <Skeleton
                   variant="rounded"
                   width={24}
@@ -164,16 +178,17 @@ const SiteCard = memo(function SiteCard({
             ) : (
               <Box
                 sx={{
-                  width: 24, 
-                  height: 24,
-                  mr: '8px', // 强制固定像素间距
+                  width: '24px !important', 
+                  minWidth: '24px !important',
+                  height: '24px !important',
+                  marginRight: '8px !important', // 全拼
                   borderRadius: '4px',
                   bgcolor: 'primary.light',
                   color: 'primary.main',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '12px', // 恢复字母大小
+                  fontSize: '12px',
                   border: 1,
                   borderColor: 'primary.main',
                   opacity: 0.8,
@@ -190,10 +205,10 @@ const SiteCard = memo(function SiteCard({
               fontWeight="medium"
               noWrap
               sx={{ 
-                fontSize: '14px', // 恢复 14px
-                lineHeight: 1,
-                textAlign: 'left', // 强制文字靠左
-                flexGrow: 1,       // 填满剩余空间，避免过度截断
+                fontSize: '14px !important',
+                lineHeight: '1 !important',
+                textAlign: 'left !important', 
+                flexGrow: 1,       
               }} 
             >
               {site.name}
@@ -209,7 +224,7 @@ const SiteCard = memo(function SiteCard({
               height: '100%', 
               width: '100%',
               display: 'flex', 
-              justifyContent: 'flex-start' // 击杀 CardActionArea 的默认居中
+              justifyContent: 'flex-start' 
             }}
           >
             <CardContent
@@ -219,15 +234,28 @@ const SiteCard = memo(function SiteCard({
                 height: '100%',
                 display: 'flex',
                 alignItems: 'center', 
-                justifyContent: 'flex-start', // 强制内容从左开始
-                padding: '0 12px !important',  // 恢复 12px
+                justifyContent: 'flex-start',
+                // 【严格模式】拒绝 MUI 响应式缩写，全部全拼
+                paddingLeft: '12px !important',
+                paddingRight: '12px !important',
+                paddingTop: '0 !important',
+                paddingBottom: '0 !important',
                 boxSizing: 'border-box',
                 '&:last-child': { paddingBottom: '0 !important' }, 
               }}
             >
               {/* 图标区域 */}
               {!iconError && site.icon ? (
-                <Box position="relative" mr="8px" width={24} height={24} flexShrink={0}> 
+                <Box 
+                  position="relative" 
+                  sx={{ 
+                    marginRight: '8px !important', 
+                    width: '24px !important', 
+                    minWidth: '24px !important', 
+                    height: '24px !important', 
+                    flexShrink: 0 
+                  }}
+                > 
                   <Skeleton
                     variant="rounded"
                     width={24}
@@ -248,9 +276,10 @@ const SiteCard = memo(function SiteCard({
               ) : (
                 <Box
                   sx={{
-                    width: 24, 
-                    height: 24,
-                    mr: '8px', 
+                    width: '24px !important', 
+                    minWidth: '24px !important',
+                    height: '24px !important',
+                    marginRight: '8px !important', // 全拼
                     borderRadius: '4px',
                     bgcolor: 'primary.light',
                     color: 'primary.main',
@@ -274,9 +303,9 @@ const SiteCard = memo(function SiteCard({
                 fontWeight="medium"
                 noWrap
                 sx={{
-                  fontSize: '14px', 
-                  lineHeight: 1,
-                  textAlign: 'left', 
+                  fontSize: '14px !important', 
+                  lineHeight: '1 !important',
+                  textAlign: 'left !important', 
                   flexGrow: 1,       
                 }}
               >
@@ -289,7 +318,7 @@ const SiteCard = memo(function SiteCard({
                   size="small"
                   sx={{
                     position: 'absolute',
-                    right: '4px', 
+                    right: '4px !important', 
                     bgcolor: 'action.hover',
                     opacity: 0,
                     transition: 'opacity 0.2s',
