@@ -207,7 +207,7 @@ function App() {
   // 【暗门逻辑】连击与快捷键触发管理员登录
   // ==========================================
   const clickCountRef = useRef(0);
-  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const clickTimerRef = useRef<number | null>(null);
 
   // 1. 标题连击彩蛋
   const handleSecretAdminLogin = () => {
@@ -218,7 +218,7 @@ function App() {
     if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
 
     // 规定必须在 2 秒内完成连击
-    clickTimerRef.current = setTimeout(() => {
+    clickTimerRef.current = window.setTimeout(() => {
       clickCountRef.current = 0;
     }, 2000);
 
