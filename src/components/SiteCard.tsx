@@ -4,10 +4,8 @@ import { Site } from '../API/http';
 import SiteSettingsModal from './SiteSettingsModal';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-// 引入Material UI组件
 import {
   Card,
-  CardContent,
   CardActionArea,
   Typography,
   Skeleton,
@@ -61,8 +59,8 @@ const SiteCard = memo(function SiteCard({
 
   // 处理设置按钮点击
   const handleSettingsClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // 阻止卡片点击事件
-    e.preventDefault(); // 防止默认行为
+    e.stopPropagation(); 
+    e.preventDefault(); 
     setShowSettings(true);
   };
 
@@ -74,7 +72,7 @@ const SiteCard = memo(function SiteCard({
   // 处理卡片点击
   const handleCardClick = () => {
     if (!isEditMode && site.url) {
-      window.location.href = site.url; //卡片原页跳转
+      window.location.href = site.url; 
     }
   };
 
@@ -107,8 +105,7 @@ const SiteCard = memo(function SiteCard({
         sx={{
           height: '100%',
           width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
+          display: 'block', // 放弃 flex，避免干扰
           borderRadius: 2, 
           transition: 'box-shadow 0.3s ease-in-out',
           border: '1px solid',
@@ -125,95 +122,47 @@ const SiteCard = memo(function SiteCard({
           // ---------------------------------
           // 编辑（拖拽）模式下的卡片样式
           // ---------------------------------
-          <Box
-            sx={{
+          <div
+            style={{
               height: '100%',
               width: '100%',
-              // 【严格模式】拒绝 MUI 响应式缩写，全部全拼
-              paddingLeft: '12px !important',
-              paddingRight: '12px !important',
-              paddingTop: '0 !important',
-              paddingBottom: '0 !important',
+              padding: '0 12px', // 纯粹的内联样式，绝对无法被覆盖
               boxSizing: 'border-box',
               cursor: 'grab',
               display: 'flex',
               alignItems: 'center', 
-              justifyContent: 'flex-start',
             }}
           >
             {/* 拖拽指示图标 */}
-            <Box display="flex" alignItems="center" sx={{ marginRight: '4px !important' }}>
-              <DragIndicatorIcon color="action" sx={{ fontSize: 18 }} />
-            </Box>
+            <DragIndicatorIcon sx={{ fontSize: 18, color: 'text.secondary', marginRight: '4px' }} />
 
             {/* 图标区域 */}
             {!iconError && site.icon ? (
-              <Box 
-                position="relative" 
-                sx={{ 
-                  marginRight: '8px !important', 
-                  width: '24px !important', 
-                  minWidth: '24px !important', // 锁死最小宽度
-                  height: '24px !important', 
-                  flexShrink: 0 
-                }}
-              > 
-                <Skeleton
-                  variant="rounded"
-                  width={24}
-                  height={24}
-                  sx={{ display: !imageLoaded ? 'block' : 'none', position: 'absolute' }}
-                />
+              <div style={{ position: 'relative', marginRight: '8px', width: 24, height: 24, flexShrink: 0 }}> 
+                <Skeleton variant="rounded" width={24} height={24} sx={{ display: !imageLoaded ? 'block' : 'none', position: 'absolute' }} />
                 <Fade in={imageLoaded} timeout={500}>
-                  <Box
-                    component="img"
-                    src={site.icon}
-                    alt={site.name}
-                    sx={{ width: 24, height: 24, borderRadius: '4px', objectFit: 'cover' }}
-                    onError={handleIconError}
-                    onLoad={handleImageLoad}
-                  />
+                  <Box component="img" src={site.icon} alt={site.name} sx={{ width: 24, height: 24, borderRadius: '4px', objectFit: 'cover' }} onError={handleIconError} onLoad={handleImageLoad} />
                 </Fade>
-              </Box>
+              </div>
             ) : (
               <Box
-                sx={{
-                  width: '24px !important', 
-                  minWidth: '24px !important',
-                  height: '24px !important',
-                  marginRight: '8px !important', // 全拼
-                  borderRadius: '4px',
-                  bgcolor: 'primary.light',
-                  color: 'primary.main',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '12px',
-                  border: 1,
-                  borderColor: 'primary.main',
-                  opacity: 0.8,
-                  flexShrink: 0,
-                }}
+                sx={{ width: 24, minWidth: 24, height: 24, marginRight: '8px', borderRadius: '4px', bgcolor: 'primary.light', color: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', border: '1px solid', borderColor: 'primary.main', opacity: 0.8, flexShrink: 0 }}
               >
                 {fallbackIcon}
               </Box>
             )}
 
             {/* 标题文字 */}
-            <Typography
-              variant="subtitle1"
-              fontWeight="medium"
-              noWrap
-              sx={{ 
-                fontSize: '14px !important',
-                lineHeight: '1 !important',
-                textAlign: 'left !important', 
-                flexGrow: 1,       
-              }} 
-            >
-              {site.name}
-            </Typography>
-          </Box>
+            <div style={{ flex: '1 1 auto', minWidth: 0, display: 'flex', alignItems: 'center' }}>
+              <Typography
+                variant="subtitle1"
+                fontWeight="medium"
+                style={{ fontSize: '14px', lineHeight: 1, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }} 
+              >
+                {site.name}
+              </Typography>
+            </div>
+          </div>
         ) : (
           // ---------------------------------
           // 正常模式（访客浏览）下的卡片样式
@@ -223,115 +172,61 @@ const SiteCard = memo(function SiteCard({
             sx={{ 
               height: '100%', 
               width: '100%',
-              display: 'flex', 
-              justifyContent: 'flex-start' 
+              margin: '0 !important',
+              padding: '0 !important',
+              display: 'block !important' // 彻底干掉 Button 的默认居中
             }}
           >
-            <CardContent
-              sx={{
+            {/* 注意这里：完全移除了 MUI 的 CardContent，改用原生 div！ */}
+            <div
+              style={{
                 width: '100%',
-                position: 'relative',
                 height: '100%',
                 display: 'flex',
                 alignItems: 'center', 
-                justifyContent: 'flex-start',
-                // 【严格模式】拒绝 MUI 响应式缩写，全部全拼
-                paddingLeft: '12px !important',
-                paddingRight: '12px !important',
-                paddingTop: '0 !important',
-                paddingBottom: '0 !important',
+                padding: '0 12px', // 内联绝对像素，手机端休想放大
                 boxSizing: 'border-box',
-                '&:last-child': { paddingBottom: '0 !important' }, 
               }}
             >
               {/* 图标区域 */}
               {!iconError && site.icon ? (
-                <Box 
-                  position="relative" 
-                  sx={{ 
-                    marginRight: '8px !important', 
-                    width: '24px !important', 
-                    minWidth: '24px !important', 
-                    height: '24px !important', 
-                    flexShrink: 0 
-                  }}
-                > 
-                  <Skeleton
-                    variant="rounded"
-                    width={24}
-                    height={24}
-                    sx={{ display: !imageLoaded ? 'block' : 'none', position: 'absolute' }}
-                  />
+                <div style={{ position: 'relative', marginRight: '8px', width: 24, height: 24, flexShrink: 0 }}> 
+                  <Skeleton variant="rounded" width={24} height={24} sx={{ display: !imageLoaded ? 'block' : 'none', position: 'absolute' }} />
                   <Fade in={imageLoaded} timeout={500}>
-                    <Box
-                      component="img"
-                      src={site.icon}
-                      alt={site.name}
-                      sx={{ width: 24, height: 24, borderRadius: '4px', objectFit: 'cover' }}
-                      onError={handleIconError}
-                      onLoad={handleImageLoad}
-                    />
+                    <Box component="img" src={site.icon} alt={site.name} sx={{ width: 24, height: 24, borderRadius: '4px', objectFit: 'cover' }} onError={handleIconError} onLoad={handleImageLoad} />
                   </Fade>
-                </Box>
+                </div>
               ) : (
                 <Box
-                  sx={{
-                    width: '24px !important', 
-                    minWidth: '24px !important',
-                    height: '24px !important',
-                    marginRight: '8px !important', // 全拼
-                    borderRadius: '4px',
-                    bgcolor: 'primary.light',
-                    color: 'primary.main',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    border: 1,
-                    borderColor: 'primary.main',
-                    opacity: 0.8,
-                    flexShrink: 0,
-                  }}
+                  sx={{ width: 24, minWidth: 24, height: 24, marginRight: '8px', borderRadius: '4px', bgcolor: 'primary.light', color: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', border: '1px solid', borderColor: 'primary.main', opacity: 0.8, flexShrink: 0 }}
                 >
                   {fallbackIcon}
                 </Box>
               )}
 
               {/* 标题文字 */}
-              <Typography
-                variant="subtitle1"
-                fontWeight="medium"
-                noWrap
-                sx={{
-                  fontSize: '14px !important', 
-                  lineHeight: '1 !important',
-                  textAlign: 'left !important', 
-                  flexGrow: 1,       
-                }}
-              >
-                {site.name}
-              </Typography>
-
-              {/* 设置按钮 */}
-              {viewMode === 'edit' && (
-                <IconButton
-                  size="small"
-                  sx={{
-                    position: 'absolute',
-                    right: '4px !important', 
-                    bgcolor: 'action.hover',
-                    opacity: 0,
-                    transition: 'opacity 0.2s',
-                    '&:hover': { bgcolor: 'action.selected' },
-                    '.MuiCardActionArea-root:hover &': { opacity: 1 },
-                  }}
-                  onClick={handleSettingsClick}
-                  aria-label="网站设置"
+              <div style={{ flex: '1 1 auto', minWidth: 0, display: 'flex', alignItems: 'center' }}>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="medium"
+                  style={{ fontSize: '14px', lineHeight: 1, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }}
                 >
-                  <SettingsIcon sx={{ fontSize: 18 }} /> 
-                </IconButton>
-              )}
-            </CardContent>
+                  {site.name}
+                </Typography>
+              </div>
+            </div>
+
+            {/* 设置按钮 */}
+            {viewMode === 'edit' && (
+              <IconButton
+                size="small"
+                sx={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', bgcolor: 'action.hover', opacity: 0, transition: 'opacity 0.2s', '&:hover': { bgcolor: 'action.selected' }, '.MuiCardActionArea-root:hover &': { opacity: 1 } }}
+                onClick={handleSettingsClick}
+                aria-label="网站设置"
+              >
+                <SettingsIcon sx={{ fontSize: 18 }} /> 
+              </IconButton>
+            )}
           </CardActionArea>
         )}
       </Card>
@@ -346,13 +241,7 @@ const SiteCard = memo(function SiteCard({
         </div>
 
         {showSettings && (
-          <SiteSettingsModal
-            site={site}
-            onUpdate={onUpdate}
-            onDelete={onDelete}
-            onClose={handleCloseSettings}
-            iconApi={iconApi} 
-          />
+          <SiteSettingsModal site={site} onUpdate={onUpdate} onDelete={onDelete} onClose={handleCloseSettings} iconApi={iconApi} />
         )}
       </>
     );
@@ -363,13 +252,7 @@ const SiteCard = memo(function SiteCard({
       {cardContent}
 
       {showSettings && (
-        <SiteSettingsModal
-          site={site}
-          onUpdate={onUpdate}
-          onDelete={onDelete}
-          onClose={handleCloseSettings}
-          iconApi={iconApi} 
-        />
+        <SiteSettingsModal site={site} onUpdate={onUpdate} onDelete={onDelete} onClose={handleCloseSettings} iconApi={iconApi} />
       )}
     </>
   );
