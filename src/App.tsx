@@ -1799,8 +1799,8 @@ function App() {
             onClick={handleSecretAdminLogin}
             sx={{
               position: 'fixed',
-              bottom: 0,
-              right: 0,
+              top: 0,
+              left: 0,
               width: 80,  // 触发区宽度 80px
               height: 80, // 触发区高度 80px
               zIndex: 9999, // 确保在最上层能被点到
