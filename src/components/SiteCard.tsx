@@ -91,7 +91,7 @@ const SiteCard = memo(function SiteCard({
     <Box
       sx={{
         height: '48px !important',
-        width: '140px !important',
+        width: '130px !important',
         position: 'relative',
         transition: 'transform 0.3s ease-in-out',
         ...(!isEditMode && {
