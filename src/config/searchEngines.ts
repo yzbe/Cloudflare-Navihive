@@ -33,6 +33,12 @@ export const SEARCH_ENGINES: SearchEngine[] = [
     icon: 'https://www.faviconextractor.com/favicon/www.bing.com?larger=true',
   },
   {
+    key: 'Yandex',
+    name: 'Yandex',
+    template: 'https://www.Yandex.com/search?q={q}',
+    icon: 'https://www.faviconextractor.com/favicon/www.Yandex.com?larger=true',
+  },
+  {
     key: 'duckduckgo',
     name: 'DuckDuckGo',
     template: 'https://duckduckgo.com/?q={q}',
