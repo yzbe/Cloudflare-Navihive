@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { NavigationClient } from './API/client';
 import { MockNavigationClient } from './API/mock';
 import { Site, Group } from './API/http';
@@ -94,7 +94,7 @@ const DEFAULT_CONFIGS = {
   'site.customCss': '',
   'site.backgroundImage': '', // 背景图片URL
   'site.backgroundOpacity': '0.15', // 背景蒙版透明度
-  'site.iconApi': 'https://www.faviconextractor.com/favicon/{domain}?larger=true', // 默认使用的API接口，带上 ?larger=true 参数可以获取最大尺寸的图标
+  'site.iconApi': 'https://www.faviconextractor.com/favicon/{domain}?larger=true', 
   'site.searchBoxEnabled': 'true', // 是否启用搜索框
   'site.searchBoxGuestEnabled': 'true', // 访客是否可以使用搜索框
 };
@@ -152,14 +152,14 @@ function App() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 1, // 降低激活阈值，使拖拽更敏感
-        delay: 0, // 移除延迟
+        distance: 1, 
+        delay: 0, 
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 100, // 降低触摸延迟
-        tolerance: 3, // 降低容忍值
+        delay: 100, 
+        tolerance: 3, 
       },
     }),
     useSensor(KeyboardSensor, {
@@ -202,6 +202,47 @@ function App() {
   // 导入结果提示框状态
   const [importResultOpen, setImportResultOpen] = useState(false);
   const [importResultMessage, setImportResultMessage] = useState('');
+
+  // ==========================================
+  // 【暗门逻辑】连击与快捷键触发管理员登录
+  // ==========================================
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 1. 标题连击彩蛋
+  const handleSecretAdminLogin = () => {
+    if (viewMode === 'edit' || isAuthenticated) return;
+
+    clickCountRef.current += 1;
+
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+
+    // 规定必须在 2 秒内完成连击
+    clickTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+    }, 2000);
+
+    // 连击 5 次触发登录
+    if (clickCountRef.current >= 5) {
+      setIsAuthRequired(true);
+      clickCountRef.current = 0;
+    }
+  };
+
+  // 2. 全局快捷键监听 (Ctrl+Shift+L)
+  useEffect(() => {
+    const handleAdminHotkey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'l') {
+        e.preventDefault();
+        if (viewMode === 'readonly' && !isAuthenticated) {
+          setIsAuthRequired(true);
+        }
+      }
+    };
+    document.addEventListener('keydown', handleAdminHotkey);
+    return () => document.removeEventListener('keydown', handleAdminHotkey);
+  }, [viewMode, isAuthenticated]);
+  // ==========================================
 
   // 菜单打开关闭
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -935,8 +976,8 @@ function App() {
           bgcolor: 'background.default',
           color: 'text.primary',
           transition: 'all 0.3s ease-in-out',
-          position: 'relative', // 添加相对定位，作为背景图片的容器
-          overflow: 'hidden', // 防止背景图片溢出
+          position: 'relative', 
+          overflow: 'hidden', 
         }}
       >
         {/* 背景图片 */}
@@ -979,7 +1020,7 @@ function App() {
           sx={{
             py: 4,
             px: { xs: 2, sm: 3, md: 4 },
-            position: 'relative', // 使内容位于背景图片和蒙版之上
+            position: 'relative', 
             zIndex: 2,
             minHeight: '100vh',
             display: 'flex',
@@ -999,9 +1040,12 @@ function App() {
               component='h1'
               fontWeight='bold'
               color='text.primary'
+              onClick={handleSecretAdminLogin} // <--- 绑定暗门彩蛋事件
               sx={{
                 fontSize: { xs: '1.75rem', sm: '2.125rem', md: '3rem' },
                 textAlign: 'center',
+                userSelect: 'none', // 防止连续点击时选中文字
+                cursor: 'default',  // 保持默认鼠标样式，深藏功与名
               }}
             >
               {configs['site.name']}
@@ -1010,13 +1054,11 @@ function App() {
 
           {/* 搜索框 - 根据配置条件渲染 */}
           {(() => {
-            // 检查搜索框是否启用
             const searchBoxEnabled = configs['site.searchBoxEnabled'] === 'true';
             if (!searchBoxEnabled) {
               return null;
             }
 
-            // 如果是访客模式，检查访客是否可用搜索框
             if (viewMode === 'readonly') {
               const guestEnabled = configs['site.searchBoxGuestEnabled'] === 'true';
               if (!guestEnabled) {
@@ -1037,7 +1079,6 @@ function App() {
                   }))}
                   sites={groups.flatMap((g) => g.sites || [])}
                   onInternalResultClick={(result: SearchResultItem) => {
-                    // 可选：滚动到对应的元素
                     if (result.type === 'group') {
                       const groupElement = document.getElementById(`group-${result.id}`);
                       groupElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1069,7 +1110,7 @@ function App() {
               sx={{
                 '& > *': { mb: 5 },
                 minHeight: '100px',
-                flexGrow: 1, // 让主要内容区域占据剩余空间
+                flexGrow: 1, 
               }}
             >
               {sortMode === SortMode.GroupSort ? (
@@ -1121,7 +1162,7 @@ function App() {
             </Box>
           )}
 
-          {/* === 新增：底部操作区 === */}
+          {/* === 底部操作区 === */}
           <Box
             sx={{
               mt: 8,
@@ -1158,16 +1199,8 @@ function App() {
               </>
             ) : (
               <>
-                {viewMode === 'readonly' ? (
-                  <Button
-                    variant='outlined'
-                    color='primary'
-                    onClick={() => setIsAuthRequired(true)}
-                    size='small'
-                  >
-                    管理员登录
-                  </Button>
-                ) : (
+                {/* 如果是访客模式，什么都不渲染（管理员按钮已被彻底抹除） */}
+                {viewMode === 'readonly' ? null : (
                   <>
                     <Button
                       variant='contained'
@@ -1241,6 +1274,7 @@ function App() {
                 )}
               </>
             )}
+            {/* 深色模式按钮永远保留 */}
             <ThemeToggle darkMode={darkMode} onToggle={toggleTheme} />
           </Box>
           {/* ===================== */}
