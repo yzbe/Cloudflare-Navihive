@@ -93,12 +93,13 @@ const SiteCard = memo(function SiteCard({
   const cardContent = (
     <Box
       sx={{
-        height: '100%',
+        height: 48, // 强行锁死卡片外部高度为 48px
+        width: 140, // 强行锁死卡片宽度为 140px，配合外部的流式布局
         position: 'relative',
         transition: 'transform 0.3s ease-in-out',
         ...(!isEditMode && {
           '&:hover': {
-            transform: 'translateY(-4px)',
+            transform: 'translateY(-2px)', // 悬浮微微抬起
           },
         }),
       }}
@@ -106,18 +107,16 @@ const SiteCard = memo(function SiteCard({
       <Card
         sx={{
           height: '100%',
+          width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          borderRadius: 3,
+          justifyContent: 'center', // 强制内部绝对居中
+          borderRadius: 2, // 圆角缩小一点更像按钮
           transition: 'box-shadow 0.3s ease-in-out',
           border: '1px solid',
           borderColor: 'divider',
-          boxShadow: isDragging ? 8 : 2,
-          '&:hover': !isEditMode
-            ? {
-                boxShadow: 5,
-              }
-            : {},
+          boxShadow: isDragging ? 8 : 1,
+          '&:hover': !isEditMode ? { boxShadow: 3 } : {},
           overflow: 'hidden',
           backgroundColor: (theme) =>
             theme.palette.mode === 'dark' ? 'rgba(33, 33, 33, 0.9)' : 'rgba(255, 255, 255, 0.9)',
@@ -125,42 +124,107 @@ const SiteCard = memo(function SiteCard({
         }}
       >
         {isEditMode ? (
+          // ---------------------------------
+          // 编辑（拖拽）模式下的卡片样式
+          // ---------------------------------
           <Box
             sx={{
               height: '100%',
-              p: { xs: 1.5, sm: 2 },
+              p: '0 12px', // 上下内边距为0，靠flex居中
               cursor: 'grab',
               display: 'flex',
-              flexDirection: 'column',
+              alignItems: 'center', // 垂直居中
+              justifyContent: 'flex-start',
             }}
           >
-            <Box position='absolute' top={8} right={8}>
-              <DragIndicatorIcon fontSize='small' color='primary' />
+            {/* 拖拽指示图标 */}
+            <Box mr={1} display="flex" alignItems="center">
+              <DragIndicatorIcon fontSize="small" color="action" sx={{ fontSize: 18 }} />
             </Box>
-            {/* 图标和名称 */}
-            <Box display='flex' alignItems='center' mb={1}>
+
+            {/* 图标区域 */}
+            {!iconError && site.icon ? (
+              <Box position="relative" mr={1} width={24} height={24} flexShrink={0}>
+                <Skeleton
+                  variant="rounded"
+                  width={24}
+                  height={24}
+                  sx={{ display: !imageLoaded ? 'block' : 'none', position: 'absolute' }}
+                />
+                <Fade in={imageLoaded} timeout={500}>
+                  <Box
+                    component="img"
+                    src={site.icon}
+                    alt={site.name}
+                    sx={{ width: 24, height: 24, borderRadius: '4px', objectFit: 'cover' }}
+                    onError={handleIconError}
+                    onLoad={handleImageLoad}
+                  />
+                </Fade>
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  width: 24,
+                  height: 24,
+                  mr: 1,
+                  borderRadius: '4px',
+                  bgcolor: 'primary.light',
+                  color: 'primary.main',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  border: 1,
+                  borderColor: 'primary.main',
+                  opacity: 0.8,
+                  flexShrink: 0,
+                }}
+              >
+                {fallbackIcon}
+              </Box>
+            )}
+
+            {/* 标题文字 */}
+            <Typography
+              variant="subtitle1"
+              fontWeight="medium"
+              noWrap
+              sx={{ fontSize: '14px', lineHeight: 1 }}
+            >
+              {site.name}
+            </Typography>
+          </Box>
+        ) : (
+          // ---------------------------------
+          // 正常模式（访客浏览）下的卡片样式
+          // ---------------------------------
+          <CardActionArea onClick={handleCardClick} sx={{ height: '100%' }}>
+            <CardContent
+              sx={{
+                position: 'relative',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center', // 绝对垂直居中
+                p: '0 12px !important', // 强行清除所有内边距，左右保留12px
+                '&:last-child': { pb: '0 !important' }, // 彻底杀掉 MUI 自带的底部多余留白
+              }}
+            >
+              {/* 图标区域 */}
               {!iconError && site.icon ? (
-                <Box position='relative' mr={1.5} width={32} height={32} flexShrink={0}>
+                <Box position="relative" mr={1.5} width={24} height={24} flexShrink={0}>
                   <Skeleton
-                    variant='rounded'
-                    width={32}
-                    height={32}
-                    sx={{
-                      display: !imageLoaded ? 'block' : 'none',
-                      position: 'absolute',
-                    }}
+                    variant="rounded"
+                    width={24}
+                    height={24}
+                    sx={{ display: !imageLoaded ? 'block' : 'none', position: 'absolute' }}
                   />
                   <Fade in={imageLoaded} timeout={500}>
                     <Box
-                      component='img'
+                      component="img"
                       src={site.icon}
                       alt={site.name}
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 1,
-                        objectFit: 'cover',
-                      }}
+                      sx={{ width: 24, height: 24, borderRadius: '4px', objectFit: 'cover' }}
                       onError={handleIconError}
                       onLoad={handleImageLoad}
                     />
@@ -169,162 +233,57 @@ const SiteCard = memo(function SiteCard({
               ) : (
                 <Box
                   sx={{
-                    width: 32,
-                    height: 32,
+                    width: 24,
+                    height: 24,
                     mr: 1.5,
-                    borderRadius: 1,
+                    borderRadius: '4px',
                     bgcolor: 'primary.light',
                     color: 'primary.main',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    fontSize: '12px',
                     border: 1,
                     borderColor: 'primary.main',
                     opacity: 0.8,
+                    flexShrink: 0,
                   }}
                 >
                   {fallbackIcon}
                 </Box>
               )}
+
+              {/* 标题文字 */}
               <Typography
-                variant='subtitle1'
-                fontWeight='medium'
+                variant="subtitle1"
+                fontWeight="medium"
                 noWrap
                 sx={{
-                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  fontSize: '14px',
+                  lineHeight: 1,
+                  // 如果需要给设置按钮留点空间，可以加上 flexGrow: 1
                 }}
               >
                 {site.name}
               </Typography>
-            </Box>
 
-            {/* 描述 */}
-            <Typography
-              variant='body2'
-              color='text.secondary'
-              sx={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-                flexGrow: 1,
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-              }}
-            >
-              {site.description || '暂无描述'}
-            </Typography>
-          </Box>
-        ) : (
-          <CardActionArea onClick={handleCardClick} sx={{ height: '100%' }}>
-            <CardContent
-              sx={{
-                position: 'relative',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                p: { xs: 1.5, sm: 2 },
-                '&:last-child': { pb: { xs: 1.5, sm: 2 } },
-              }}
-            >
-              {/* 图标和名称 */}
-              <Box display='flex' alignItems='center' mb={1}>
-                {!iconError && site.icon ? (
-                  <Box position='relative' mr={1.5} width={32} height={32} flexShrink={0}>
-                    <Skeleton
-                      variant='rounded'
-                      width={32}
-                      height={32}
-                      sx={{
-                        display: !imageLoaded ? 'block' : 'none',
-                        position: 'absolute',
-                      }}
-                    />
-                    <Fade in={imageLoaded} timeout={500}>
-                      <Box
-                        component='img'
-                        src={site.icon}
-                        alt={site.name}
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 1,
-                          objectFit: 'cover',
-                        }}
-                        onError={handleIconError}
-                        onLoad={handleImageLoad}
-                      />
-                    </Fade>
-                  </Box>
-                ) : (
-                  <Box
-                    sx={{
-                      width: 32,
-                      height: 32,
-                      mr: 1.5,
-                      borderRadius: 1,
-                      bgcolor: 'primary.light',
-                      color: 'primary.main',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: 1,
-                      borderColor: 'primary.main',
-                      opacity: 0.8,
-                    }}
-                  >
-                    {fallbackIcon}
-                  </Box>
-                )}
-                <Typography
-                  variant='subtitle1'
-                  fontWeight='medium'
-                  noWrap
-                  sx={{
-                    fontSize: { xs: '0.875rem', sm: '1rem' },
-                  }}
-                >
-                  {site.name}
-                </Typography>
-              </Box>
-
-              {/* 描述 */}
-              <Typography
-                variant='body2'
-                color='text.secondary'
-                sx={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  flexGrow: 1,
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                }}
-              >
-                {site.description || '暂无描述'}
-              </Typography>
-
-              {/* 设置按钮 - 只在编辑模式显示 */}
+              {/* 设置按钮 - 绝对定位在右侧 */}
               {viewMode === 'edit' && (
                 <IconButton
-                  size='small'
+                  size="small"
                   sx={{
                     position: 'absolute',
-                    top: 8,
-                    right: 8,
+                    right: 4,
                     bgcolor: 'action.hover',
                     opacity: 0,
                     transition: 'opacity 0.2s',
-                    '&:hover': {
-                      bgcolor: 'action.selected',
-                    },
-                    '.MuiCardActionArea-root:hover &': {
-                      opacity: 1,
-                    },
+                    '&:hover': { bgcolor: 'action.selected' },
+                    '.MuiCardActionArea-root:hover &': { opacity: 1 },
                   }}
                   onClick={handleSettingsClick}
-                  aria-label='网站设置'
+                  aria-label="网站设置"
                 >
-                  <SettingsIcon fontSize='small' />
+                  <SettingsIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               )}
             </CardContent>
