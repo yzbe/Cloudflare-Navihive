@@ -1,3 +1,4 @@
+// src/components/GroupCard.tsx
 import React, { useState, useEffect } from 'react';
 import { Site, Group } from '../API/http';
 import SiteCard from './SiteCard';
@@ -17,7 +18,7 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  horizontalListSortingStrategy,
+  rectSortingStrategy, // 【关键更改1】改用网格专属的拖拽排序策略
 } from '@dnd-kit/sortable';
 // 引入Material UI组件
 import {
@@ -174,26 +175,21 @@ const GroupCard: React.FC<GroupCardProps> = ({
         >
           <SortableContext
             items={sitesToRender.map((site) => `site-${site.id}`)}
-            strategy={horizontalListSortingStrategy}
+            strategy={rectSortingStrategy} // 【关键更改2】使用网格排序策略
           >
             <Box sx={{ width: '100%' }}>
               <Box
                 sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  justifyContent: 'center', // 【关键修改】强制整体居中排版
-                  gap: 1.5, // 添加统一的间距
+                  display: 'grid', // 【终极魔法1】改用 Grid 布局
+                  gridTemplateColumns: 'repeat(auto-fill, 140px)', // 固定每列140px，塞满为止
+                  justifyContent: 'center', // 【终极魔法2】居中整个网格块
+                  gap: 1.5, // 卡片间距
                 }}
               >
                 {sitesToRender.map((site, idx) => (
                   <Box
                     key={site.id || idx}
-                    sx={{
-                      width: 'auto', // 去除百分比，改为自适应内容宽度
-                      flex: '0 0 auto',
-                      padding: 0, // 去除内边距，由外层的 gap 控制间距
-                      boxSizing: 'border-box',
-                    }}
+                    sx={{ width: 140 }} // 强制外壳宽度，适配 Grid 轨道
                   >
                     <SiteCard
                       site={site}
@@ -202,7 +198,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
                       isEditMode={true}
                       viewMode={viewMode}
                       index={idx}
-                      iconApi={configs?.['site.iconApi']} // 传入iconApi配置
+                      iconApi={configs?.['site.iconApi']} 
                     />
                   </Box>
                 ))}
@@ -217,21 +213,16 @@ const GroupCard: React.FC<GroupCardProps> = ({
     return (
       <Box
         sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center', // 【关键修改】强制整体居中排版
-          gap: 1.5, // 添加统一的间距
+          display: 'grid', // 【终极魔法1】改用 Grid 布局
+          gridTemplateColumns: 'repeat(auto-fill, 140px)', // 自动计算列数，每列固定140px宽
+          justifyContent: 'center', // 【终极魔法2】把计算好的整个网格推到容器中间
+          gap: 1.5, 
         }}
       >
         {sitesToRender.map((site) => (
           <Box
             key={site.id}
-            sx={{
-              width: 'auto', // 去除百分比，改为自适应内容宽度
-              flex: '0 0 auto',
-              padding: 0, // 去除内边距，由外层的 gap 控制间距
-              boxSizing: 'border-box',
-            }}
+            sx={{ width: 140 }} // 强制子容器占满 140px 轨道
           >
             <SiteCard
               site={site}
@@ -239,7 +230,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
               onDelete={onDelete}
               isEditMode={false}
               viewMode={viewMode}
-              iconApi={configs?.['site.iconApi']} // 传入iconApi配置
+              iconApi={configs?.['site.iconApi']} 
             />
           </Box>
         ))}
