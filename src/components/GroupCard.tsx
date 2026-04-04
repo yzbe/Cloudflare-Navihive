@@ -181,22 +181,17 @@ const GroupCard: React.FC<GroupCardProps> = ({
                 sx={{
                   display: 'flex',
                   flexWrap: 'wrap',
-                  margin: -1, // 抵消内部padding，确保边缘对齐
+                  gap: 1.5, // 添加统一的间距
                 }}
               >
                 {sitesToRender.map((site, idx) => (
                   <Box
                     key={site.id || idx}
                     sx={{
-                      width: {
-                        xs: '50%',
-                        sm: '50%',
-                        md: '25%',
-                        lg: '25%',
-                        xl: '25%',
-                      },
-                      padding: 1, // 内部间距，更均匀的分布
-                      boxSizing: 'border-box', // 确保padding不影响宽度计算
+                      width: 'auto', // 去除百分比，改为自适应内容宽度
+                      flex: '0 0 auto',
+                      padding: 0, // 去除内边距，由外层的 gap 控制间距
+                      boxSizing: 'border-box',
                     }}
                   >
                     <SiteCard
@@ -223,22 +218,17 @@ const GroupCard: React.FC<GroupCardProps> = ({
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
-          margin: -1, // 抵消内部padding，确保边缘对齐
+          gap: 1.5, // 添加统一的间距
         }}
       >
         {sitesToRender.map((site) => (
           <Box
             key={site.id}
             sx={{
-              width: {
-                xs: '100%',
-                sm: '50%',
-                md: '33.33%',
-                lg: '25%',
-                xl: '20%',
-              },
-              padding: 1, // 内部间距，更均匀的分布
-              boxSizing: 'border-box', // 确保padding不影响宽度计算
+              width: 'auto', // 去除百分比，改为自适应内容宽度
+              flex: '0 0 auto',
+              padding: 0, // 去除内边距，由外层的 gap 控制间距
+              boxSizing: 'border-box',
             }}
           >
             <SiteCard
