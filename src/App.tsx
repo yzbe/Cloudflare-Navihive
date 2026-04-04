@@ -1794,6 +1794,23 @@ function App() {
             </DialogActions>
           </Dialog>
 
+          {/* === 终极暗门：左下角隐形触发区 === */}
+          <Box
+            onClick={handleSecretAdminLogin}
+            sx={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              width: 80,  // 触发区宽度 80px
+              height: 80, // 触发区高度 80px
+              zIndex: 9999, // 确保在最上层能被点到
+              cursor: 'default', // 保持普通鼠标指针，不暴露它是可点击的
+              // 调试时可以把下面的注释打开，看看它在哪，平时保持全透明
+              // backgroundColor: 'rgba(255,0,0,0.2)', 
+            }}
+          />
+          {/* ============================== */}
+          
           {/* GitHub角标 - 在移动端调整位置 */}
           <Box
             sx={{
