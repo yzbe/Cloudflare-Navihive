@@ -60,20 +60,13 @@ const SiteCard = memo(function SiteCard({
   // 处理设置按钮点击
   const handleSettingsClick = (e: React.MouseEvent) => {
     e.stopPropagation(); 
-    e.preventDefault(); 
+    e.preventDefault(); // 防止点击设置按钮时触发链接跳转
     setShowSettings(true);
   };
 
   // 处理关闭设置
   const handleCloseSettings = () => {
     setShowSettings(false);
-  };
-
-  // 处理卡片点击
-  const handleCardClick = () => {
-    if (!isEditMode && site.url) {
-      window.location.href = site.url; 
-    }
   };
 
   // 处理图标加载错误
@@ -91,7 +84,7 @@ const SiteCard = memo(function SiteCard({
     <Box
       sx={{
         height: '48px !important',
-        width: '130px !important',
+        width: '140px !important',
         position: 'relative',
         transition: 'transform 0.3s ease-in-out',
         ...(!isEditMode && {
@@ -126,7 +119,7 @@ const SiteCard = memo(function SiteCard({
             style={{
               height: '100%',
               width: '100%',
-              padding: '0 12px', // 纯粹的内联样式，绝对无法被覆盖
+              padding: '0 12px', 
               boxSizing: 'border-box',
               cursor: 'grab',
               display: 'flex',
@@ -168,23 +161,26 @@ const SiteCard = memo(function SiteCard({
           // 正常模式（访客浏览）下的卡片样式
           // ---------------------------------
           <CardActionArea 
-            onClick={handleCardClick} 
+            component="a"             // 【神级修改】：强制变身为 HTML <a> 标签
+            href={site.url || '#'}    // 【神级修改】：赋予原生超链接属性
+            rel="noopener noreferrer" // 安全属性
             sx={{ 
               height: '100%', 
               width: '100%',
               margin: '0 !important',
               padding: '0 !important',
-              display: 'block !important' // 彻底干掉 Button 的默认居中
+              display: 'block !important', 
+              textDecoration: 'none', // 确保链接没有下划线
+              color: 'inherit',       // 继承原本的字体颜色
             }}
           >
-            {/* 注意这里：完全移除了 MUI 的 CardContent，改用原生 div！ */}
             <div
               style={{
                 width: '100%',
                 height: '100%',
                 display: 'flex',
                 alignItems: 'center', 
-                padding: '0 12px', // 内联绝对像素，手机端休想放大
+                padding: '0 12px', 
                 boxSizing: 'border-box',
               }}
             >
