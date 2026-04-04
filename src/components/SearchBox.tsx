@@ -307,7 +307,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ groups, sites, onInternalResultCl
             placeholder={
               mode === 'internal'
                 ? '搜索站点、分组...'
-                : `使用 ${selectedEngine.name} 搜索或输入网址...`
+                : `使用 ${selectedEngine.name} 搜索`
             }
             value={query}
             onChange={(e) => setQuery(e.target.value)}
