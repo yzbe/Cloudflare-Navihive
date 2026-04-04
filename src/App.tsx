@@ -682,6 +682,7 @@ function App() {
           id: group.id,
           name: group.name,
           order_num: group.order_num,
+          is_public: group.order_num,
         })),
         // 站点数据作为单独的顶级数组
         sites: allSites,
@@ -980,16 +981,17 @@ function App() {
             px: { xs: 2, sm: 3, md: 4 },
             position: 'relative', // 使内容位于背景图片和蒙版之上
             zIndex: 2,
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: 'center', // 标题居中
               alignItems: 'center',
               mb: 5,
-              flexDirection: { xs: 'column', sm: 'row' },
-              gap: { xs: 2, sm: 0 },
             }}
           >
             <Typography
@@ -999,152 +1001,11 @@ function App() {
               color='text.primary'
               sx={{
                 fontSize: { xs: '1.75rem', sm: '2.125rem', md: '3rem' },
-                textAlign: { xs: 'center', sm: 'left' },
+                textAlign: 'center',
               }}
             >
               {configs['site.name']}
             </Typography>
-            <Stack
-              direction={{ xs: 'row', sm: 'row' }}
-              spacing={{ xs: 1, sm: 2 }}
-              alignItems='center'
-              width={{ xs: '100%', sm: 'auto' }}
-              justifyContent={{ xs: 'center', sm: 'flex-end' }}
-              flexWrap='wrap'
-              sx={{ gap: { xs: 1, sm: 2 }, py: { xs: 1, sm: 0 } }}
-            >
-              {sortMode !== SortMode.None ? (
-                <>
-                  {sortMode === SortMode.GroupSort && (
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      startIcon={<SaveIcon />}
-                      onClick={handleSaveGroupOrder}
-                      size='small'
-                      sx={{
-                        minWidth: 'auto',
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                      }}
-                    >
-                      保存分组顺序
-                    </Button>
-                  )}
-                  <Button
-                    variant='outlined'
-                    color='inherit'
-                    startIcon={<CancelIcon />}
-                    onClick={cancelSort}
-                    size='small'
-                    sx={{
-                      minWidth: 'auto',
-                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    }}
-                  >
-                    取消编辑
-                  </Button>
-                </>
-              ) : (
-                <>
-                  {viewMode === 'readonly' ? (
-                    // 访客模式：显示登录按钮
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      onClick={() => setIsAuthRequired(true)}
-                      size='small'
-                      sx={{
-                        minWidth: 'auto',
-                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                      }}
-                    >
-                      管理员登录
-                    </Button>
-                  ) : (
-                    // 编辑模式：显示管理按钮
-                    <>
-                      <Button
-                        variant='contained'
-                        color='primary'
-                        startIcon={<AddIcon />}
-                        onClick={handleOpenAddGroup}
-                        size='small'
-                        sx={{
-                          minWidth: 'auto',
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        }}
-                      >
-                        新增分组
-                      </Button>
-
-                      <Button
-                        variant='outlined'
-                        color='primary'
-                        startIcon={<MenuIcon />}
-                        onClick={handleMenuOpen}
-                        aria-controls={openMenu ? 'navigation-menu' : undefined}
-                        aria-haspopup='true'
-                        aria-expanded={openMenu ? 'true' : undefined}
-                        size='small'
-                        sx={{
-                          minWidth: 'auto',
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                        }}
-                      >
-                        更多选项
-                      </Button>
-                      <Menu
-                        id='navigation-menu'
-                        anchorEl={menuAnchorEl}
-                        open={openMenu}
-                        onClose={handleMenuClose}
-                        MenuListProps={{
-                          'aria-labelledby': 'navigation-button',
-                        }}
-                      >
-                        <MenuItem onClick={startGroupSort}>
-                          <ListItemIcon>
-                            <SortIcon fontSize='small' />
-                          </ListItemIcon>
-                          <ListItemText>编辑排序</ListItemText>
-                        </MenuItem>
-                        <MenuItem onClick={handleOpenConfig}>
-                          <ListItemIcon>
-                            <SettingsIcon fontSize='small' />
-                          </ListItemIcon>
-                          <ListItemText>网站设置</ListItemText>
-                        </MenuItem>
-                        <Divider />
-                        <MenuItem onClick={handleExportData}>
-                          <ListItemIcon>
-                            <FileDownloadIcon fontSize='small' />
-                          </ListItemIcon>
-                          <ListItemText>导出数据</ListItemText>
-                        </MenuItem>
-                        <MenuItem onClick={handleOpenImport}>
-                          <ListItemIcon>
-                            <FileUploadIcon fontSize='small' />
-                          </ListItemIcon>
-                          <ListItemText>导入数据</ListItemText>
-                        </MenuItem>
-                        {isAuthenticated && (
-                          <>
-                            <Divider />
-                            <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
-                              <ListItemIcon sx={{ color: 'error.main' }}>
-                                <LogoutIcon fontSize='small' />
-                              </ListItemIcon>
-                              <ListItemText>退出登录</ListItemText>
-                            </MenuItem>
-                          </>
-                        )}
-                      </Menu>
-                    </>
-                  )}
-                </>
-              )}
-              <ThemeToggle darkMode={darkMode} onToggle={toggleTheme} />
-            </Stack>
           </Box>
 
           {/* 搜索框 - 根据配置条件渲染 */}
@@ -1208,6 +1069,7 @@ function App() {
               sx={{
                 '& > *': { mb: 5 },
                 minHeight: '100px',
+                flexGrow: 1, // 让主要内容区域占据剩余空间
               }}
             >
               {sortMode === SortMode.GroupSort ? (
@@ -1258,6 +1120,130 @@ function App() {
               )}
             </Box>
           )}
+
+          {/* === 新增：底部操作区 === */}
+          <Box
+            sx={{
+              mt: 8,
+              pb: 4,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 2,
+              flexWrap: 'wrap',
+            }}
+          >
+            {sortMode !== SortMode.None ? (
+              <>
+                {sortMode === SortMode.GroupSort && (
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    startIcon={<SaveIcon />}
+                    onClick={handleSaveGroupOrder}
+                    size='small'
+                  >
+                    保存分组顺序
+                  </Button>
+                )}
+                <Button
+                  variant='outlined'
+                  color='inherit'
+                  startIcon={<CancelIcon />}
+                  onClick={cancelSort}
+                  size='small'
+                >
+                  取消编辑
+                </Button>
+              </>
+            ) : (
+              <>
+                {viewMode === 'readonly' ? (
+                  <Button
+                    variant='outlined'
+                    color='primary'
+                    onClick={() => setIsAuthRequired(true)}
+                    size='small'
+                  >
+                    管理员登录
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      startIcon={<AddIcon />}
+                      onClick={handleOpenAddGroup}
+                      size='small'
+                    >
+                      新增分组
+                    </Button>
+
+                    <Button
+                      variant='outlined'
+                      color='primary'
+                      startIcon={<MenuIcon />}
+                      onClick={handleMenuOpen}
+                      aria-controls={openMenu ? 'navigation-menu' : undefined}
+                      aria-haspopup='true'
+                      aria-expanded={openMenu ? 'true' : undefined}
+                      size='small'
+                    >
+                      更多选项
+                    </Button>
+                    <Menu
+                      id='navigation-menu'
+                      anchorEl={menuAnchorEl}
+                      open={openMenu}
+                      onClose={handleMenuClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'navigation-button',
+                      }}
+                    >
+                      <MenuItem onClick={startGroupSort}>
+                        <ListItemIcon>
+                          <SortIcon fontSize='small' />
+                        </ListItemIcon>
+                        <ListItemText>编辑排序</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={handleOpenConfig}>
+                        <ListItemIcon>
+                          <SettingsIcon fontSize='small' />
+                        </ListItemIcon>
+                        <ListItemText>网站设置</ListItemText>
+                      </MenuItem>
+                      <Divider />
+                      <MenuItem onClick={handleExportData}>
+                        <ListItemIcon>
+                          <FileDownloadIcon fontSize='small' />
+                        </ListItemIcon>
+                        <ListItemText>导出数据</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={handleOpenImport}>
+                        <ListItemIcon>
+                          <FileUploadIcon fontSize='small' />
+                        </ListItemIcon>
+                        <ListItemText>导入数据</ListItemText>
+                      </MenuItem>
+                      {isAuthenticated && (
+                        <>
+                          <Divider />
+                          <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
+                            <ListItemIcon sx={{ color: 'error.main' }}>
+                              <LogoutIcon fontSize='small' />
+                            </ListItemIcon>
+                            <ListItemText>退出登录</ListItemText>
+                          </MenuItem>
+                        </>
+                      )}
+                    </Menu>
+                  </>
+                )}
+              </>
+            )}
+            <ThemeToggle darkMode={darkMode} onToggle={toggleTheme} />
+          </Box>
+          {/* ===================== */}
 
           {/* 新增分组对话框 */}
           <Dialog
