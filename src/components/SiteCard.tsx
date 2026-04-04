@@ -94,7 +94,7 @@ const SiteCard = memo(function SiteCard({
     <Box
       sx={{
         height: 48, // 强行锁死卡片外部高度为 48px
-        width: 140, // 强行锁死卡片宽度为 140px，配合外部的流式布局
+        width: 120, // 强行锁死卡片宽度为 140px，配合外部的流式布局
         position: 'relative',
         transition: 'transform 0.3s ease-in-out',
         ...(!isEditMode && {
