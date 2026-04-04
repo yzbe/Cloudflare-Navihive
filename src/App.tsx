@@ -89,8 +89,8 @@ enum SortMode {
 
 // 默认配置
 const DEFAULT_CONFIGS = {
-  'site.title': '导航站',
-  'site.name': '导航站',
+  'site.title': '导航',
+  'site.name': '导航',
   'site.customCss': '',
   'site.backgroundImage': '', // 背景图片URL
   'site.backgroundOpacity': '0.15', // 背景蒙版透明度
