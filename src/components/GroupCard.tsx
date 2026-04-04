@@ -181,6 +181,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
                 sx={{
                   display: 'flex',
                   flexWrap: 'wrap',
+                  justifyContent: 'center', // 【关键修改】强制整体居中排版
                   gap: 1.5, // 添加统一的间距
                 }}
               >
@@ -218,6 +219,7 @@ const GroupCard: React.FC<GroupCardProps> = ({
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
+          justifyContent: 'center', // 【关键修改】强制整体居中排版
           gap: 1.5, // 添加统一的间距
         }}
       >
