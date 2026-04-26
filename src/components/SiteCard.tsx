@@ -89,10 +89,7 @@ const SiteCard = memo(function SiteCard({
         transition: 'transform 0.3s ease-in-out',
         ...(!isEditMode && {
           '&:hover': {
-           //transform: 'translateY(-2px)', 
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            backgroundColor: (theme) => 
-              theme.palette.mode === 'dark' ? 'rgba(45, 45, 45, 1)' : 'rgba(245, 245, 245, 1)',
+           transform: 'translateY(-2px)', 
           },
         }),
       }}
