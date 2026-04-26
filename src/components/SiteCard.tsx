@@ -89,7 +89,7 @@ const SiteCard = memo(function SiteCard({
         transition: 'transform 0.3s ease-in-out',
         ...(!isEditMode && {
           '&:hover': {
-           transform: 'translateY(-2px)', 
+           transform: 'translateY(-20px)', 
           },
         }),
       }}
