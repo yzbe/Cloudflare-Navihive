@@ -95,7 +95,7 @@ const DEFAULT_CONFIGS = {
   'site.backgroundImage': '', // 背景图片URL
   'site.backgroundOpacity': '0.15', // 背景蒙版透明度
   // 'site.iconApi': 'https://www.faviconextractor.com/favicon/{domain}?larger=true', //原始图标方案
-  'site.iconApi': 'https://favicon.duowenit.com/favicon/{domain}', // 百度图标方案
+  'site.iconApi': 'https://favicon.duowenit.com/favicon/{domain}?larger=true',  // 百度图标方案
   'site.searchBoxEnabled': 'true', // 是否启用搜索框
   'site.searchBoxGuestEnabled': 'true', // 访客是否可以使用搜索框
 };
