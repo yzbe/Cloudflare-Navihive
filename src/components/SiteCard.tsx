@@ -12,6 +12,7 @@ import {
   IconButton,
   Box,
   Fade,
+  Tooltip, // 【关键新增】：引入 Tooltip 组件
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -86,10 +87,12 @@ const SiteCard = memo(function SiteCard({
         height: '48px !important',
         width: '140px !important',
         position: 'relative',
-        transition: 'transform 0.3s ease-in-out',
+        transition: 'all 0.2s ease-in-out', // 缩短过渡时间，提升丝滑度
         ...(!isEditMode && {
           '&:hover': {
-           transform: 'translateY(-2px)', 
+            // ❌ 抹除高分屏导致模糊的物理位移：transform: 'translateY(-2px)'
+            // ✅ 改用优雅的阴影扩散与微变色，达到相同的浮起暗示且绝对不发虚
+            boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
           },
         }),
       }}
@@ -109,6 +112,9 @@ const SiteCard = memo(function SiteCard({
           backgroundColor: (theme) =>
             theme.palette.mode === 'dark' ? 'rgba(33, 33, 33, 0.9)' : 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(5px)',
+          // 💡 强力保险：强制子卡片在任何硬件下保持最高矢量抗锯齿清晰度
+          backfaceVisibility: 'hidden',
+          transform: 'translateZ(0)',
         }}
       >
         {isEditMode ? (
@@ -145,15 +151,17 @@ const SiteCard = memo(function SiteCard({
               </Box>
             )}
 
-            {/* 标题文字 */}
+            {/* 标题文字（编辑模式下也同样加入气泡） */}
             <div style={{ flex: '1 1 auto', minWidth: 0, display: 'flex', alignItems: 'center' }}>
-              <Typography
-                variant="subtitle1"
-                fontWeight="medium"
-                style={{ fontSize: '14px', lineHeight: 1, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }} 
-              >
-                {site.name}
-              </Typography>
+              <Tooltip title={site.name} arrow disableInteractive enterDelay={500}>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="medium"
+                  style={{ fontSize: '14px', lineHeight: 1, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }} 
+                >
+                  {site.name}
+                </Typography>
+              </Tooltip>
             </div>
           </div>
         ) : (
@@ -161,17 +169,17 @@ const SiteCard = memo(function SiteCard({
           // 正常模式（访客浏览）下的卡片样式
           // ---------------------------------
           <CardActionArea 
-            component="a"             // 【神级修改】：强制变身为 HTML <a> 标签
-            href={site.url || '#'}    // 【神级修改】：赋予原生超链接属性
-            rel="noopener noreferrer" // 安全属性
+            component="a"             
+            href={site.url || '#'}    
+            rel="noopener noreferrer" 
             sx={{ 
               height: '100%', 
               width: '100%',
               margin: '0 !important',
               padding: '0 !important',
               display: 'block !important', 
-              textDecoration: 'none', // 确保链接没有下划线
-              color: 'inherit',       // 继承原本的字体颜色
+              textDecoration: 'none', 
+              color: 'inherit',       
             }}
           >
             <div
@@ -202,13 +210,23 @@ const SiteCard = memo(function SiteCard({
 
               {/* 标题文字 */}
               <div style={{ flex: '1 1 auto', minWidth: 0, display: 'flex', alignItems: 'center' }}>
-                <Typography
-                  variant="subtitle1"
-                  fontWeight="medium"
-                  style={{ fontSize: '14px', lineHeight: 1, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }}
+                {/* 【核心修改】：用 Tooltip 包裹长标题 */}
+                <Tooltip 
+                  title={site.name} 
+                  arrow 
+                  disableInteractive // 鼠标无法点击到气泡内部，防止干扰正常的超链接跳转
+                  enterDelay={300}    // 停留300毫秒再显示，防止鼠标滑过时气泡满天飞
+                  leaveDelay={100}
+                  placement="bottom"  // 气泡固定显示在卡片的下方
                 >
-                  {site.name}
-                </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="medium"
+                    style={{ fontSize: '14px', lineHeight: 1, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%' }}
+                  >
+                    {site.name}
+                  </Typography>
+                </Tooltip>
               </div>
             </div>
 
