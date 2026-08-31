@@ -23,10 +23,6 @@
         }
     ],
     "vars": {
-        "AUTH_ENABLED": "false",
-        "AUTH_USERNAME": "",
-        "AUTH_PASSWORD": "",
-        "AUTH_SECRET": ""
     }
 }
 
